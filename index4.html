@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Page</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #eceff3;
+        }
+        .container {
+            background-color: #eceff3;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 1200px;
+            margin-top: 20px;
+            position: relative;
+        }
+        .upload-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .upload-container input[type="file"] {
+            display: none;
+        }
+        .upload-container label {
+            background-color: #5ac059;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .title {
+            text-align: right;
+            font-size: 32px;
+            margin-bottom: 30px;
+            position: relative;
+            display: inline-block;
+        }
+        .title::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: #5ac059;
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            width: 100%;
+            position: relative;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background-color: #eceff3;
+        }
+        .form-group input::placeholder {
+            color: #888;
+        }
+        .close-btn {
+            position: absolute;
+            right: 2px;
+            top: 70%;
+            transform: translateY(-50%);
+            width: 25px;
+            height: 25px;
+            background-color: black;
+            color: white;
+            text-align: center;
+            line-height: 23px;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+            border-radius: 4px;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .row input[type="text"], .row input[type="date"], .row select {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .row input[type="text"]#report-type, .row select#report-type {
+            flex: 0.3;
+        }
+        .row input[type="date"]#start-date, .row input[type="date"]#end-date {
+            flex: 0.3;
+        }
+        .line {
+            border-top: 2px solid #5ac059;
+            margin: 40px 0;
+        }
+        .row-4 {
+            display: flex;
+            justify-content: space-between;
+        }
+        .row-4 .form-group {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .row-4 .form-group:last-child {
+            margin-right: 0;
+        }
+        .row-generate {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 40px;
+        }
+        .generate-report button {
+            background-color: #5ac059;
+            color: black;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        .graphs-title {
+            text-align: center;
+            font-size: 28px;
+            margin-top: 40px;
+        }
+        .required {
+            color: red;
+        }
+        #fileNameDisplay {
+            margin-left: 10px;
+            color: #333;
+        }
+        .chart-type-select {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="upload-container">
+        <input type="file" id="fileInput" accept=".csv">
+        <label for="fileInput">Upload CSV</label>
+        <span id="fileNameDisplay"></span>
+    </div>
+
+    <div class="title">Reports</div>
+
+    <div class="row">
+        <div class="form-group">
+            <label for="report-type">Report Type:</label>
+            <select id="report-type" name="report-type">
+                <option value="total-emissions">Total Emissions</option>
+                <!-- Add other options as needed -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="start-date">Start Date</label>
+            <input type="date" id="start-date" name="start-date" placeholder="Select Start Date">
+        </div>
+        <div class="form-group">
+            <label for="end-date">End Date</label>
+            <input type="date" id="end-date" name="end-date" placeholder="Select End Date">
+        </div>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="row-4">
+        <div class="form-group">
+            <label for="company">Company <span class="required">*</span></label>
+            <input type="text" id="company" name="company" placeholder="Company">
+            <span class="close-btn" id="close-btn-company">&times;</span>
+        </div>
+        <div class="form-group">
+            <label for="delivery-services">Delivery Services Provider <span class="required">*</span></label>
+            <input type="text" id="delivery-services-Provider" name="delivery-services-Provider" placeholder="Delivery Services Provider">
+            <span class="close-btn" id="close-btn-delivery-services">&times;</span>
+        </div>
+        <div class="form-group">
+            <label for="route-id">Route ID</label>
+            <input type="text" id="route-id" name="route-id" placeholder="Route ID">
+        </div>
+        <div class="form-group">
+            <label for="reference-no">Reference No</label>
+            <input type="text" id="reference-no" name="reference-no" placeholder="Reference No">
+        </div>
+    </div>
+
+    <div class="chart-type-select">
+        <label for="chart-type">Select Chart Type:</label>
+        <select id="chart-type">
+            <option value="column">Column</option>
+            <option value="line">Line</option>
+            <option value="pie">Pie</option>
+            <option value="bar">Bar</option>
+            <option value="area">Area</option>
+            <option value="scatter">Scatter</option>
+            <option value="bubble">Bubble</option>
+            <option value="heatmap">Heatmap</option>
+            <option value="polar">Polar</option>
+            <option value="waterfall">Waterfall</option>
+        </select>
+    </div>
+
+    <div class="row-generate">
+        <div class="generate-report">
+            <button type="button">Create Report</button>
+        </div>
+    </div>
+    
+
+    <div class="line"></div>
+
+    <div class="graphs-title">Graphs</div>
+
+    <table id="dataTable" border="1"></table>
+    <div id="chartsContainer"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/heatmap.js"></script>
+<script src="https://code.highcharts.com/modules/pattern-fill.js"></script>
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const dataTable = document.getElementById('dataTable');
+    const chartsContainer = document.getElementById('chartsContainer');
+    const createReportButton = document.querySelector('.generate-report button');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const chartTypeSelect = document.getElementById('chart-type');
+
+    let csvData = [];
+
+    fileInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            fileNameDisplay.textContent = file.name;
+            Papa.parse(file, {
+                header: true,
+                complete: function(results) {
+                    csvData = results.data;
+                    displayCSVData(csvData);
+                }
+            });
+        }
+    });
+
+    createReportButton.addEventListener('click', function() {
+        if (csvData.length > 0) {
+            generateCharts(csvData);
+        } else {
+            alert('Please upload a CSV file first.');
+        }
+    });
+
+    function displayCSVData(data) {
+        dataTable.innerHTML = ''; // Clear existing table
+        const headers = Object.keys(data[0]);
+        const tableHeader = dataTable.insertRow();
+        headers.forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            tableHeader.appendChild(th);
+        });
+
+        data.forEach(row => {
+            const tableRow = dataTable.insertRow();
+            headers.forEach(header => {
+                const cell = tableRow.insertCell();
+                cell.textContent = row[header];
+            });
+        });
+    }
+
+    function generateCharts(data) {
+    chartsContainer.innerHTML = ''; // Clear existing charts
+
+    if (data.length === 0) return;
+
+    const columns = Object.keys(data[0]);
+    const colors = ['#32ac4a', '#317c3d', '#26522d', '#1e3f23', '#152d18'];
+    const chartType = chartTypeSelect.value;
+
+    columns.forEach(column => {
+        const chartContainer = document.createElement('div');
+        chartsContainer.appendChild(chartContainer);
+
+        const seriesData = data.map(row => parseFloat(row[column]) || 0);
+        const categories = data.map(row => row[columns[0]] || `Row ${data.indexOf(row) + 1}`);
+
+        Highcharts.chart(chartContainer, {
+            chart: {
+                type: chartType,
+                events: {
+                    load: function() {
+                        const chart = this;
+                        setTimeout(function() {
+                            const rightPosition = chart.chartWidth - 150;
+                            const logoWidth = 140; // Adjust this as per your logo size
+                            const logoHeight = 60; // Adjust this as per your logo size
+                            chart.renderer.image('images/logo.png', rightPosition, 10, logoWidth, logoHeight)
+                                .add();
+                        }, 0);
+                    }
+                }
+            },
+            title: {
+                text: `${column} (CO<sub>2</sub>)`,
+                useHTML: true
+            },
+            xAxis: {
+                categories: categories
+            },
+            yAxis: {
+                title: {
+                    text: column
+                }
+            },
+            series: [{
+                name: column,
+                data: seriesData,
+                color: colors[0]
+            }],
+            plotOptions: {
+                column: {
+                    colorByPoint: true,
+                    colors: colors
+                },
+                bar: {
+                    colorByPoint: true,
+                    colors: colors
+                },
+                area: {
+                    color: colors[0]
+                },
+                scatter: {
+                    color: colors[0]
+                },
+                bubble: {
+                    color: colors[0]
+                },
+                heatmap: {
+                    colsize: 1
+                },
+                pie: {
+                    innerSize: '50%',
+                    dataLabels: {
+                        format: '{point.name}: {point.y:.1f}%'
+                    }
+                },
+                polar: {
+                    markers: {
+                        enabled: true
+                    }
+                },
+                waterfall: {
+                    colorByPoint: true
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            tooltip: {
+                formatter: function() {
+                    return `<b>${this.x}</b><br>${this.series.name}: ${this.y}`;
+                }
+            }
+        });
+    });
+}
+
+
+    const companyInput = document.getElementById('company');
+    const closeBtnCompany = document.getElementById('close-btn-company');
+
+    closeBtnCompany.addEventListener('click', function() {
+        companyInput.value = '';
+        companyInput.focus();
+    });
+
+    const deliveryServicesInput = document.getElementById('delivery-services-Provider');
+    const closeBtnDeliveryServices = document.getElementById('close-btn-delivery-services');
+
+    closeBtnDeliveryServices.addEventListener('click', function() {
+        deliveryServicesInput.value = '';
+        deliveryServicesInput.focus();
+    });
+</script>
+
+</body>
+</html>
